@@ -54,7 +54,6 @@ namespace DarkScript_2
 
             public void Save(string input)
             {
-                var sb = new StringBuilder();
                 try
                 {
                     File.WriteAllText("tmp.txt", input);
