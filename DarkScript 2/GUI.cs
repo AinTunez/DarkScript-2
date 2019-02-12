@@ -54,19 +54,25 @@ namespace DarkScript_2
 
             public void Save(string input)
             {
+                var sb = new StringBuilder();
                 try
                 {
                     File.WriteAllText("tmp.txt", input);
                     var p = new Process();
-                    p.StartInfo.CreateNoWindow = true;
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;;
                     p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     p.StartInfo.FileName = "EventScriptTool.exe";
-                    p.StartInfo.Arguments = "tmp.txt -p -o \"" + FilePath + "\"";
+                    p.StartInfo.Arguments = "tmp.txt -p -o \"" + FilePath + "";
                     p.Start();
+                    string err = p.StandardError.ReadToEnd();
                     p.WaitForExit();
                     p.Dispose();
                     File.Delete("tmp.txt");
                     Refresh();
+                    if (string.IsNullOrWhiteSpace(err)) Refresh();
+                    else MessageBox.Show(err);
                 } catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
