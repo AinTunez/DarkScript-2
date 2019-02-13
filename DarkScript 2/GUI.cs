@@ -99,7 +99,6 @@ namespace DarkScript_2
                     p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     p.StartInfo.FileName = "EventScriptTool.exe";
                     p.StartInfo.Arguments = arguments + " -o tmp.txt";
-                    Console.WriteLine(p.StartInfo.FileName + " " + p.StartInfo.Arguments);
                     p.Start();
                     string err = p.StandardError.ReadToEnd();
                     p.WaitForExit();
