@@ -113,6 +113,7 @@
             this.editorNumeric.Size = new System.Drawing.Size(399, 693);
             this.editorNumeric.TabIndex = 0;
             this.editorNumeric.Zoom = 100;
+            this.editorNumeric.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.editorNumeric_TextChanged);
             this.editorNumeric.SelectionChanged += new System.EventHandler(this.editorNumeric_SelectionChanged);
             this.editorNumeric.SelectionChangedDelayed += new System.EventHandler(this.editorNumeric_SelectionChangedDelayed);
             this.editorNumeric.Scroll += new System.Windows.Forms.ScrollEventHandler(this.editorNumeric_Scroll);
@@ -152,6 +153,7 @@
             this.editorVerbose.Size = new System.Drawing.Size(786, 693);
             this.editorVerbose.TabIndex = 0;
             this.editorVerbose.Zoom = 100;
+            this.editorVerbose.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.editorVerbose_TextChanged);
             this.editorVerbose.SelectionChanged += new System.EventHandler(this.editorVerbose_SelectionChanged);
             this.editorVerbose.SelectionChangedDelayed += new System.EventHandler(this.editorVerbose_SelectionChangedDelayed);
             this.editorVerbose.Scroll += new System.Windows.Forms.ScrollEventHandler(this.editorVerbose_Scroll);

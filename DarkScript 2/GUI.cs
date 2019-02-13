@@ -21,9 +21,13 @@ namespace DarkScript_2
 
         public GUI()
         {
+            SetStyles();
             InitializeComponent();
             editorSplit.SplitterDistance = 400;
             thisForm = this;
+
+            editorNumeric.AllowSeveralTextStyleDrawing = true;
+            editorVerbose.AllowSeveralTextStyleDrawing = true;
         }
 
         public class EMEVD
@@ -61,6 +65,7 @@ namespace DarkScript_2
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.RedirectStandardOutput = true;
                     p.StartInfo.RedirectStandardError = true;;
+                    p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     p.StartInfo.FileName = "EventScriptTool.exe";
                     p.StartInfo.Arguments = "tmp.txt -p -o \"" + FilePath + "";
@@ -69,7 +74,6 @@ namespace DarkScript_2
                     p.WaitForExit();
                     p.Dispose();
                     File.Delete("tmp.txt");
-                    Refresh();
                     if (string.IsNullOrWhiteSpace(err)) Refresh();
                     else MessageBox.Show(err);
                 } catch (Exception ex)
@@ -103,7 +107,6 @@ namespace DarkScript_2
                     p.BeginOutputReadLine();
                     p.BeginErrorReadLine();
                     p.WaitForExit();
-
                     ActiveForm.Cursor = Cursors.Default;
                 } catch (Exception ex)
                 {
@@ -153,7 +156,7 @@ namespace DarkScript_2
             var sfd = new SaveFileDialog();
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                this.Cursor = Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
                 int cursorPos = editorNumeric.SelectionStart;
                 int scrollPos = editorNumeric.VerticalScroll.Value;
                 try
@@ -172,7 +175,7 @@ namespace DarkScript_2
                     MessageBox.Show(ex.ToString());
                     this.Cursor = Cursors.Default;
                 }
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -197,7 +200,7 @@ namespace DarkScript_2
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -253,6 +256,52 @@ namespace DarkScript_2
                 e.SuppressKeyPress = true;
                 e.Handled = true;
             }
+        }
+
+        static Dictionary<string, Style> Styles = new Dictionary<string, Style>();
+
+
+        private void SetStyles()
+        {
+
+            TextStyle style(Brush b) => new TextStyle(b, Brushes.Transparent, FontStyle.Regular);
+            Styles["GREEN"] = style(Brushes.DarkGreen);
+            Styles["BLUE"] = style(Brushes.Blue);
+            Styles["DARKBLUE"] = style(Brushes.DarkBlue);
+            Styles["SLATEBLUE"] = style(Brushes.DarkSlateBlue);
+            Styles["PURPLE"] = style(Brushes.DarkMagenta);
+            Styles["BLACK"] = style(Brushes.Black);
+            Styles["RED"] = style(Brushes.Red);
+        }
+
+
+
+        private void editorNumeric_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            void style(string brush, string pattern) => e.ChangedRange.SetStyle(Styles[brush], pattern);
+
+            style("SLATEBLUE", "\\d+");
+            style("GREEN", "[A-Za-z]+");
+            style("BLUE", "(?<range>\\d+)\\[\\d+\\]");
+            style("BLUE", "\\d+\\[(?<range>\\d+)\\]");
+            style("DARKBLUE", "\\n\\d+,\\s*\\d+\\s*\\n");
+            style("BLACK", "EVD[^\\n]+");
+        }
+
+
+        private void editorVerbose_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            void style(string brush, string pattern) => e.ChangedRange.SetStyle(Styles[brush], pattern);
+
+            style("BLACK", "[(){},]+");
+            style("BLACK", "\\)\\s*\n");
+            style("RED", "\\b(SKIP|END|IF)\\b");
+            style("GREEN", "\\b(AND|OR|MAIN)\\n");
+            style("BLUE", "\\b(END|Disable|Enable|RESTART|Set|Initialize|Batch)\\b");
+            style("SLATEBLUE", "\\d+");
+            style("SLATEBLUE", "[A-Za-z0-9\\s]+:(?<range>[^,)]+)");
+            style("PURPLE", "(?<range>[A-Za-z0-9-\\s]+):([^,)]+)");
         }
     }
 }
