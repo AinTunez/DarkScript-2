@@ -140,6 +140,7 @@ namespace DarkScript_2
             {
                 try
                 {
+                    File.Copy(ofd.FileName, ofd.FileName + ".bak", false);
                     currentEMEVD = EMEVD.Read(ofd.FileName);
                     editorNumeric.Text = AdjustNumeric(currentEMEVD.NumericText);
                     editorVerbose.Text = AdjustVerbose(currentEMEVD.VerboseText, currentEMEVD.NumericText);
