@@ -63,7 +63,6 @@ namespace DarkScript_2
                     File.WriteAllText("tmp.txt", input);
                     var p = new Process();
                     p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.RedirectStandardOutput = true;
                     p.StartInfo.RedirectStandardError = true;;
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -90,30 +89,36 @@ namespace DarkScript_2
 
             private string ReadFile(string arguments)
             {
-                var sb = new StringBuilder();
                 try
                 {
+                    ActiveForm.Cursor = Cursors.WaitCursor;
                     var p = new Process();
-                    p.StartInfo.RedirectStandardOutput = true;
                     p.StartInfo.RedirectStandardError = true;
-                    p.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
-                    p.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     p.StartInfo.FileName = "EventScriptTool.exe";
-                    p.StartInfo.Arguments = arguments;
+                    p.StartInfo.Arguments = arguments + " -o tmp.txt";
+                    Console.WriteLine(p.StartInfo.FileName + " " + p.StartInfo.Arguments);
                     p.Start();
-                    p.BeginOutputReadLine();
-                    p.BeginErrorReadLine();
+                    string err = p.StandardError.ReadToEnd();
                     p.WaitForExit();
+                    if (err.Length > 0)
+                    {
+                        ActiveForm.Cursor = Cursors.Default;
+                        MessageBox.Show(err);
+                        return err;
+                    }
+                    string output = File.ReadAllText("tmp.txt");
+                    File.Delete("tmp.txt");
                     ActiveForm.Cursor = Cursors.Default;
+                    return output;
                 } catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
-                    return "";
+                    ActiveForm.Cursor = Cursors.Default;
+                    return "ERROR";
                 }
-                return sb.ToString();
 
             }
 
