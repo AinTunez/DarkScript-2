@@ -30,6 +30,11 @@ namespace DarkScript_2
             editorVerbose.AllowSeveralTextStyleDrawing = true;
         }
 
+        public void SetFormTitle()
+        {
+            thisForm.Text = "DarkScript 2 - " + Path.GetFileName(Project.ProjectPath);
+        }
+
         private void GUI_Load(object sender, EventArgs e)
         {
             editorSplit.SplitterWidth = 20;
@@ -204,6 +209,7 @@ namespace DarkScript_2
                 Project.SaveToProject();
             }
             RefreshVerbose();
+            SetFormTitle();
         }
 
 
@@ -225,11 +231,17 @@ namespace DarkScript_2
                         {
                             var result = MessageBox.Show("An event project already exists for this file. Load it?", "Alert", MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes) Project = new EventProject(ofd.FileName + ".dscproj", true);
-                            else Project = new EventProject(ofd.FileName, false);
+                            else
+                            {
+                                Project = new EventProject(ofd.FileName, false);
+                                Project.ProjectPath = ofd.FileName + "_1.dscproj";
+                            }
                         } else Project = new EventProject(ofd.FileName, false);
+                        Project.SaveToProject();
                     }
                     editorNumeric.Text = Project.NumericText;
                     editorVerbose.Text = Project.VerboseOutput();
+                    SetFormTitle();
                 }
                 catch (Exception ex)
                 {
