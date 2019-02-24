@@ -36,10 +36,14 @@
             this.editorVerbose = new FastColoredTextBoxNS.FastColoredTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openEMEVDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveEMEVDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveProjectAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveEMEVDAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editorPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorSplit)).BeginInit();
             this.editorSplit.Panel1.SuspendLayout();
@@ -163,7 +167,8 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1238, 28);
@@ -173,44 +178,76 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openEMEVDToolStripMenuItem,
+            this.openProjectToolStripMenuItem,
+            this.saveProjectToolStripMenuItem,
             this.saveEMEVDToolStripMenuItem,
+            this.saveProjectAsToolStripMenuItem,
             this.saveEMEVDAsToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // openEMEVDToolStripMenuItem
+            // openProjectToolStripMenuItem
             // 
-            this.openEMEVDToolStripMenuItem.Name = "openEMEVDToolStripMenuItem";
-            this.openEMEVDToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openEMEVDToolStripMenuItem.Size = new System.Drawing.Size(278, 26);
-            this.openEMEVDToolStripMenuItem.Text = "Open EMEVD";
-            this.openEMEVDToolStripMenuItem.Click += new System.EventHandler(this.openEMEVDToolStripMenuItem_Click);
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
+            this.openProjectToolStripMenuItem.Text = "Open";
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openEMEVDToolStripMenuItem_Click);
+            // 
+            // saveProjectToolStripMenuItem
+            // 
+            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
+            this.saveProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
+            this.saveProjectToolStripMenuItem.Text = "Save Project";
+            this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // saveEMEVDToolStripMenuItem
             // 
             this.saveEMEVDToolStripMenuItem.Name = "saveEMEVDToolStripMenuItem";
-            this.saveEMEVDToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveEMEVDToolStripMenuItem.Size = new System.Drawing.Size(278, 26);
+            this.saveEMEVDToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveEMEVDToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
             this.saveEMEVDToolStripMenuItem.Text = "Save EMEVD";
             this.saveEMEVDToolStripMenuItem.Click += new System.EventHandler(this.saveEMEVDToolStripMenuItem_Click);
+            // 
+            // saveProjectAsToolStripMenuItem
+            // 
+            this.saveProjectAsToolStripMenuItem.Name = "saveProjectAsToolStripMenuItem";
+            this.saveProjectAsToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
+            this.saveProjectAsToolStripMenuItem.Text = "Save Project As";
+            this.saveProjectAsToolStripMenuItem.Click += new System.EventHandler(this.saveProjectAsToolStripMenuItem_Click);
             // 
             // saveEMEVDAsToolStripMenuItem
             // 
             this.saveEMEVDAsToolStripMenuItem.Name = "saveEMEVDAsToolStripMenuItem";
-            this.saveEMEVDAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.S)));
-            this.saveEMEVDAsToolStripMenuItem.Size = new System.Drawing.Size(278, 26);
+            this.saveEMEVDAsToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
             this.saveEMEVDAsToolStripMenuItem.Text = "Save EMEVD As";
             this.saveEMEVDAsToolStripMenuItem.Click += new System.EventHandler(this.saveEMEVDAsToolStripMenuItem_Click);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(278, 26);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(258, 26);
             this.quitToolStripMenuItem.Text = "Quit";
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.refreshProjectToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // refreshProjectToolStripMenuItem
+            // 
+            this.refreshProjectToolStripMenuItem.Name = "refreshProjectToolStripMenuItem";
+            this.refreshProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.refreshProjectToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
+            this.refreshProjectToolStripMenuItem.Text = "Refresh Verbose";
+            this.refreshProjectToolStripMenuItem.Click += new System.EventHandler(this.refreshProjectToolStripMenuItem_Click);
             // 
             // GUI
             // 
@@ -224,6 +261,7 @@
             this.Text = "DarkScript 2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.GUI_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GUI_KeyDown);
             this.editorPanel.ResumeLayout(false);
             this.editorSplit.Panel1.ResumeLayout(false);
             this.editorSplit.Panel2.ResumeLayout(false);
@@ -246,10 +284,14 @@
         private FastColoredTextBoxNS.FastColoredTextBox editorVerbose;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openEMEVDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveEMEVDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveEMEVDAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveProjectAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem refreshProjectToolStripMenuItem;
     }
 }
 

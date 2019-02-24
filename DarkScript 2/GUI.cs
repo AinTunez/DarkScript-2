@@ -15,7 +15,7 @@ namespace DarkScript_2
 {
     public partial class GUI : Form
     {
-        public EMEVD currentEMEVD;
+        public EventProject Project;
         public GUI thisForm;
         public bool scrolling = false;
 
@@ -30,183 +30,10 @@ namespace DarkScript_2
             editorVerbose.AllowSeveralTextStyleDrawing = true;
         }
 
-        public class EMEVD
-        {
-            public string FilePath { get; set; }
-            public string NumericText { get; private set; }
-            public string VerboseText { get; private set; }
-
-            public static EMEVD Read(string path)
-            {
-                var emevd = new EMEVD(path);
-                emevd.Refresh();
-                return emevd;
-            }
-
-            private EMEVD(string path) => FilePath = path;
-
-            public void Refresh()
-            {
-                NumericText = Numeric();
-                VerboseText = Verbose();
-            }
-
-            public void RefreshVerbose()
-            {
-                VerboseText = Verbose();
-            }
-
-            public void Save(string input)
-            {
-                try
-                {
-                    File.WriteAllText("tmp.txt", input);
-                    var p = new Process();
-                    p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.RedirectStandardError = true;;
-                    p.StartInfo.CreateNoWindow = true;
-                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    p.StartInfo.FileName = "EventScriptTool.exe";
-                    p.StartInfo.Arguments = "tmp.txt -p -o \"" + FilePath + "";
-                    p.Start();
-                    string err = p.StandardError.ReadToEnd();
-                    p.WaitForExit();
-                    p.Dispose();
-                    File.Delete("tmp.txt");
-                    if (string.IsNullOrWhiteSpace(err)) Refresh();
-                    else MessageBox.Show(err);
-                } catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-
-            public void SaveAs(string path, string input)
-            {
-                FilePath = path;
-                Save(input);
-            }
-
-            private string ReadFile(string arguments)
-            {
-                try
-                {
-                    ActiveForm.Cursor = Cursors.WaitCursor;
-                    var p = new Process();
-                    p.StartInfo.RedirectStandardError = true;
-                    p.StartInfo.CreateNoWindow = true;
-                    p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    p.StartInfo.FileName = "EventScriptTool.exe";
-                    p.StartInfo.Arguments = arguments + " -o tmp.txt";
-                    p.Start();
-                    string err = p.StandardError.ReadToEnd();
-                    p.WaitForExit();
-                    if (err.Length > 0)
-                    {
-                        ActiveForm.Cursor = Cursors.Default;
-                        MessageBox.Show(err);
-                        return err;
-                    }
-                    string output = File.ReadAllText("tmp.txt");
-                    File.Delete("tmp.txt");
-                    ActiveForm.Cursor = Cursors.Default;
-                    return output;
-                } catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                    ActiveForm.Cursor = Cursors.Default;
-                    return "ERROR";
-                }
-
-            }
-
-            private string Numeric() => ReadFile("-n -s \"" + FilePath + "\"");
-
-            private string Verbose() => ReadFile("-v -s \"" + FilePath + "\"");
-        }
-
-
         private void GUI_Load(object sender, EventArgs e)
         {
             editorSplit.SplitterWidth = 20;
             editorSplit.SplitterDistance = 400;
-        }
-
-        private void openEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    File.Copy(ofd.FileName, ofd.FileName + ".bak", false);
-                    currentEMEVD = EMEVD.Read(ofd.FileName);
-                    editorNumeric.Text = AdjustNumeric(currentEMEVD.NumericText);
-                    editorVerbose.Text = AdjustVerbose(currentEMEVD.VerboseText, currentEMEVD.NumericText);
-                } catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-        }
-
-        private string AdjustNumeric(string numeric) => numeric.Replace(Environment.NewLine + "    ^", " ^");
-
-        private string AdjustVerbose(string verbose, string numeric) => verbose.Replace(Environment.NewLine + "Parameters:", " | Parameters:");
-
-        private void saveEMEVDAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (currentEMEVD == null) return;
-            var sfd = new SaveFileDialog();
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                Cursor = Cursors.WaitCursor;
-                int cursorPos = editorNumeric.SelectionStart;
-                int scrollPos = editorNumeric.VerticalScroll.Value;
-                try
-                {
-                    currentEMEVD.SaveAs(sfd.FileName, editorNumeric.Text.Replace(" ^", Environment.NewLine + "    ^"));
-                    editorNumeric.Text = AdjustNumeric(currentEMEVD.NumericText);
-                    editorVerbose.Text = AdjustVerbose(currentEMEVD.VerboseText, currentEMEVD.NumericText);
-                    editorNumeric.SelectionStart = cursorPos;
-                    editorNumeric.VerticalScroll.Value = scrollPos;
-                    editorVerbose.VerticalScroll.Value = scrollPos;
-                    editorNumeric.VerticalScroll.Value = scrollPos;
-                    editorVerbose.VerticalScroll.Value = scrollPos;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                    this.Cursor = Cursors.Default;
-                }
-                Cursor = Cursors.Default;
-            }
-        }
-
-        private void saveEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (currentEMEVD == null) return;
-            int cursorPos = editorNumeric.SelectionStart;
-            int scrollPos = editorNumeric.VerticalScroll.Value;
-            try
-            {
-                Cursor = Cursors.WaitCursor;
-                currentEMEVD.Save(editorNumeric.Text.Replace(" ^", Environment.NewLine + "    ^"));
-                editorVerbose.Text = AdjustVerbose(currentEMEVD.VerboseText, currentEMEVD.NumericText);
-                editorNumeric.Text = AdjustNumeric(currentEMEVD.NumericText);
-                editorNumeric.VerticalScroll.Value = scrollPos;
-                editorVerbose.VerticalScroll.Value = scrollPos;
-                editorNumeric.VerticalScroll.Value = scrollPos;
-                editorVerbose.VerticalScroll.Value = scrollPos;
-                editorNumeric.SelectionStart = cursorPos;
-                Cursor = Cursors.Default;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                Cursor = Cursors.Default;
-            }
         }
 
         private void ScrollPosChanged(FastColoredTextBox target, FastColoredTextBox source)
@@ -249,26 +76,28 @@ namespace DarkScript_2
 
         private void Box_KeyDown(object sender, KeyEventArgs e)
         {
+            e.SuppressKeyPress = true;
+            e.Handled = true;
             FastColoredTextBox box = sender as FastColoredTextBox;
             if (e.Control && e.KeyCode == Keys.F)
             {
                 box.ShowFindDialog();
-                e.SuppressKeyPress = true;
-                e.Handled = true;
-            } else if (e.Control && e.KeyCode == Keys.R)
+            } else if (e.Control && e.Shift && e.KeyCode == Keys.R)
             {
                 box.ShowReplaceDialog();
-                e.SuppressKeyPress = true;
-                e.Handled = true;
+            } else
+            {
+                e.SuppressKeyPress = false;
+                e.Handled = false;
             }
+            
+
         }
 
         static Dictionary<string, Style> Styles = new Dictionary<string, Style>();
 
-
         private void SetStyles()
         {
-
             TextStyle style(Brush b) => new TextStyle(b, Brushes.Transparent, FontStyle.Regular);
             Styles["GREEN"] = style(Brushes.DarkGreen);
             Styles["BLUE"] = style(Brushes.Blue);
@@ -277,6 +106,7 @@ namespace DarkScript_2
             Styles["PURPLE"] = style(Brushes.DarkMagenta);
             Styles["BLACK"] = style(Brushes.Black);
             Styles["RED"] = style(Brushes.Red);
+            Styles["GRAY"] = style(Brushes.Gray);
         }
 
 
@@ -286,18 +116,23 @@ namespace DarkScript_2
 
             void style(string brush, string pattern) => e.ChangedRange.SetStyle(Styles[brush], pattern);
 
+            e.ChangedRange.ClearStyle(Styles.Values.ToArray());
+
             style("SLATEBLUE", "\\d+");
             style("GREEN", "[A-Za-z]+");
             style("BLUE", "(?<range>\\d+)\\[\\d+\\]");
             style("BLUE", "\\d+\\[(?<range>\\d+)\\]");
             style("DARKBLUE", "\\n\\d+,\\s*\\d+\\s*\\n");
             style("BLACK", "EVD[^\\n]+");
+            style("GRAY", "#([^\\r\\n]|#)*");
         }
 
 
         private void editorVerbose_TextChanged(object sender, TextChangedEventArgs e)
         {
             void style(string brush, string pattern) => e.ChangedRange.SetStyle(Styles[brush], pattern);
+
+            e.ChangedRange.ClearStyle(Styles.Values.ToArray());
 
             style("BLACK", "[(){},]+");
             style("BLACK", "\\)\\s*\n");
@@ -307,6 +142,120 @@ namespace DarkScript_2
             style("SLATEBLUE", "\\d+");
             style("SLATEBLUE", "[A-Za-z0-9\\s]+:(?<range>[^,)]+)");
             style("PURPLE", "(?<range>[A-Za-z0-9-\\s]+):([^,)]+)");
+        }
+
+        private void GUI_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Project == null) return;
+        }
+
+        private void RefreshVerbose()
+        {
+            if (Project == null) return;
+            int cursorPos = editorNumeric.SelectionStart;
+            int scrollPos = editorNumeric.VerticalScroll.Value;
+            editorVerbose.Text = Project.VerboseFromString(editorNumeric.Text);
+
+            editorNumeric.SelectionStart = cursorPos;
+            editorNumeric.SelectionLength = 0;
+            editorNumeric.VerticalScroll.Value = scrollPos;
+            editorVerbose.VerticalScroll.Value = scrollPos;
+            editorNumeric.VerticalScroll.Value = scrollPos;
+            editorVerbose.VerticalScroll.Value = scrollPos;
+        }
+
+        private void refreshProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshVerbose();
+        }
+
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Project == null) return;
+            Project.NumericText = editorNumeric.Text;
+            if (string.IsNullOrWhiteSpace(Project.ProjectPath))
+            {
+                saveProjectAsToolStripMenuItem_Click(sender, e);
+            } else
+            {
+                Project.SaveToProject();
+            }
+            RefreshVerbose();
+        }
+
+        private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Project == null) return;
+            var sfd = new SaveFileDialog();
+            sfd.Title = "Save Project As";
+            if (string.IsNullOrWhiteSpace(Project.ProjectPath))
+            {
+                sfd.InitialDirectory = Path.GetDirectoryName(Project.EmevdPath);
+                sfd.FileName = Path.GetFileName(Project.EmevdPath) + ".dscproj";
+            } else
+            {
+                sfd.InitialDirectory = Path.GetDirectoryName(Project.ProjectPath);
+            }
+            sfd.FileName = Path.GetFileName(Project.ProjectPath);
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                Project.NumericText = editorNumeric.Text;
+                Project.ProjectPath = sfd.FileName;
+                Project.SaveToProject();
+            }
+            RefreshVerbose();
+        }
+
+
+        private void openEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (Path.GetExtension(ofd.FileName) == ".dscproj")
+                    {
+                        Project = new EventProject(ofd.FileName, true);
+                    }
+                    else
+                    {
+                        if (!File.Exists(ofd.FileName + ".bak")) File.Copy(ofd.FileName, ofd.FileName + ".bak");
+                        if (File.Exists(ofd.FileName + ".dscproj"))
+                        {
+                            var result = MessageBox.Show("An event project already exists for this file. Load it?", "Alert", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes) Project = new EventProject(ofd.FileName + ".dscproj", true);
+                            else Project = new EventProject(ofd.FileName, false);
+                        } else Project = new EventProject(ofd.FileName, false);
+                    }
+                    editorNumeric.Text = Project.NumericText;
+                    editorVerbose.Text = Project.VerboseOutput();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        private void saveEMEVDAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Project == null) return;
+            var sfd = new SaveFileDialog();
+            sfd.Title = "Save EMEVD As";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                Project.EmevdPath = sfd.FileName;
+                Project.SaveToProject();
+                Project.SaveToEmevd();
+            }
+        }
+
+        private void saveEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Project == null) return;
+            MessageBox.Show(Project.EmevdPath);
+            Project.SaveToEmevd();
         }
     }
 }
