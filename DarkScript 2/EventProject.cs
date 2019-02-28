@@ -15,6 +15,7 @@ namespace DarkScript_2
         public string ProjectPath { get; set; }
         public string EmevdPath { get; set; }
         public string NumericText { get; set; }
+        public string AdjustedNumeric => AdjustNumeric(NumericText);
 
         public EventProject(string path, bool fromProject = true)
         {

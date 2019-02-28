@@ -239,7 +239,7 @@ namespace DarkScript_2
                         } else Project = new EventProject(ofd.FileName, false);
                         Project.SaveToProject();
                     }
-                    editorNumeric.Text = Project.NumericText;
+                    editorNumeric.Text = Project.AdjustedNumeric;
                     editorVerbose.Text = Project.VerboseOutput();
                     SetFormTitle();
                 }
