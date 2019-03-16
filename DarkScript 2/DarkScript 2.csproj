@@ -48,6 +48,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventProject.cs" />
+    <Compile Include="ConfigEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigEditor.Designer.cs">
+      <DependentUpon>ConfigEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExistingAskForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExistingAskForm.Designer.cs">
+      <DependentUpon>ExistingAskForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,6 +68,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ConfigEditor.resx">
+      <DependentUpon>ConfigEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExistingAskForm.resx">
+      <DependentUpon>ExistingAskForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI.resx">
       <DependentUpon>GUI.cs</DependentUpon>
     </EmbeddedResource>

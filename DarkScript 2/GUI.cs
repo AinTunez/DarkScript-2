@@ -16,7 +16,7 @@ namespace DarkScript_2
     public partial class GUI : Form
     {
         public EventProject Project;
-        public GUI thisForm;
+        public GUIConfig Config;
         public bool scrolling = false;
 
         public GUI()
@@ -24,15 +24,21 @@ namespace DarkScript_2
             SetStyles();
             InitializeComponent();
             editorSplit.SplitterDistance = 400;
-            thisForm = this;
 
             editorNumeric.AllowSeveralTextStyleDrawing = true;
             editorVerbose.AllowSeveralTextStyleDrawing = true;
+            if (File.Exists("DarkScript2.config"))
+            {
+                Config = new GUIConfig("DarkScript2.config");
+            } else
+            {
+                Config = new GUIConfig();
+            }
         }
 
         public void SetFormTitle()
         {
-            thisForm.Text = "DarkScript 2 - " + Path.GetFileName(Project.ProjectPath);
+            Text = "DarkScript 2 - " + Path.GetFileName(Project.ProjectPath);
         }
 
         private void GUI_Load(object sender, EventArgs e)
@@ -59,7 +65,6 @@ namespace DarkScript_2
                     checkCount++;
                 }
             }
-            Console.WriteLine("SRC --> " + source.VerticalScroll.Value + " : TGT --> " + target.VerticalScroll.Value);
             scrolling = false;
         }
 
@@ -95,8 +100,6 @@ namespace DarkScript_2
                 e.SuppressKeyPress = false;
                 e.Handled = false;
             }
-            
-
         }
 
         static Dictionary<string, Style> Styles = new Dictionary<string, Style>();
@@ -213,9 +216,21 @@ namespace DarkScript_2
         }
 
 
+
         private void openEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
+
+            void load() => Project = new EventProject(ofd.FileName + ".dscproj", true);
+            void overwrite() => Project = new EventProject(ofd.FileName, false);
+            void backup()
+            {
+                var dateString = DateTime.Now.ToString("_yyMMdd_hhmmss");
+                File.Move(ofd.FileName + ".dscproj", ofd.FileName + dateString + ".dscproj");
+                Project = new EventProject(ofd.FileName, false);
+                Project.ProjectPath = ofd.FileName + ".dscproj";
+            }
+
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -229,16 +244,23 @@ namespace DarkScript_2
                         if (!File.Exists(ofd.FileName + ".bak")) File.Copy(ofd.FileName, ofd.FileName + ".bak");
                         if (File.Exists(ofd.FileName + ".dscproj"))
                         {
-                            var result = MessageBox.Show("An event project already exists for this file. Load it?", "Alert", MessageBoxButtons.YesNo);
-                            if (result == DialogResult.Yes) Project = new EventProject(ofd.FileName + ".dscproj", true);
-                            else
+                            if (Config.ExistingProjectAction == EPHV.Load) load();
+                            else if (Config.ExistingProjectAction == EPHV.Backup) backup();
+                            else if (Config.ExistingProjectAction == EPHV.Overwrite) overwrite();
+                            else if (Config.ExistingProjectAction == EPHV.Ask)
                             {
-                                Project = new EventProject(ofd.FileName, false);
-                                Project.ProjectPath = ofd.FileName + "_1.dscproj";
+                                var frm = new ExistingAskForm();
+                                if (frm.ShowDialog() == DialogResult.OK)
+                                {
+                                    if (frm.loadBtn.Checked) load();
+                                    else if (frm.backupBtn.Checked) backup();
+                                    else overwrite();
+                                }
                             }
                         } else Project = new EventProject(ofd.FileName, false);
-                        Project.SaveToProject();
+                        if (Project != null) Project.SaveToProject();
                     }
+                    if (Project == null) return;
                     editorNumeric.Text = Project.AdjustedNumeric;
                     editorVerbose.Text = Project.VerboseOutput();
                     SetFormTitle();
@@ -257,6 +279,7 @@ namespace DarkScript_2
             sfd.Title = "Save EMEVD As";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+                RefreshVerbose();
                 Project.EmevdPath = sfd.FileName;
                 Project.SaveToProject();
                 Project.SaveToEmevd();
@@ -266,8 +289,14 @@ namespace DarkScript_2
         private void saveEMEVDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Project == null) return;
-            MessageBox.Show(Project.EmevdPath);
+            RefreshVerbose();
             Project.SaveToEmevd();
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cfg = new ConfigEditor(Config);
+            cfg.Show();
         }
     }
 }

@@ -24,13 +24,14 @@ namespace DarkScript_2
                 string[] text = File.ReadAllLines(path);
                 EmevdPath = text[0];
                 NumericText = string.Join(Environment.NewLine, text.Skip(1));
+                ProjectPath = path;
             }
             else
             {
                 EmevdPath = path;
                 NumericText = ReadFile("-n \"" + EmevdPath + "\"");
+                ProjectPath = path + ".dscproj";
             }
-            ProjectPath = EmevdPath + ".dscproj";
         }
 
         public void SaveToProject()
