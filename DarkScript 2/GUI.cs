@@ -38,7 +38,8 @@ namespace DarkScript_2
 
         public void SetFormTitle()
         {
-            Text = "DarkScript 2 - " + Path.GetFileName(Project.ProjectPath);
+            if (Project == null) Text = "DarkScript 2";
+            else Text = "DarkScript 2 - " + Path.GetFileName(Project.ProjectPath);
         }
 
         private void GUI_Load(object sender, EventArgs e)
@@ -233,6 +234,9 @@ namespace DarkScript_2
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                Project = null;
+                editorNumeric.Text = "";
+                editorVerbose.Text = "";
                 try
                 {
                     if (Path.GetExtension(ofd.FileName) == ".dscproj")
@@ -270,6 +274,7 @@ namespace DarkScript_2
                     MessageBox.Show(ex.ToString());
                 }
             }
+            SetFormTitle();
         }
 
         private void saveEMEVDAsToolStripMenuItem_Click(object sender, EventArgs e)
